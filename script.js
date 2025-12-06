@@ -542,7 +542,7 @@ async function renderApp() {
                          
                          <!-- Content -->
                          <div style="position:relative; z-index:2; margin-top:180px;">
-                            <h1 style="font-size:4rem; line-height:0.8; color:black; margin-bottom:20px; letter-spacing: -2px;">WRAPPED<br><span style="color:#d2fa39; -webkit-text-stroke:1.5px black;">2025</span></h1>
+                            <h1 style="font-size:4rem; line-height:0.8; color:black; margin-bottom:20px; letter-spacing: -2px;">WRAPPED<br><span style="color:#d2fa39; -webkit-text-stroke:1.5px black;">${new Date().getFullYear()}</span></h1>
                             
                             <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom: 25px;">
                                 <div><h3 style="border-bottom:3px solid black; font-size:0.9rem; margin-bottom:8px; padding-bottom:2px;">TOP ARTISTS</h3>${colArt}</div>
@@ -562,7 +562,7 @@ async function renderApp() {
 
                             <!-- ИМЯ ЮЗЕРА ТЕПЕРЬ ВНУТРИ КАРТОЧКИ -->
                             <div style="margin-top: 20px; display:flex; justify-content:space-between; align-items:center;">
-                                <div style="font-family: monospace; font-size: 0.7rem; color: #888;">namida-wrapped.local</div>
+                                <div style="font-family: monospace; font-size: 0.7rem; color: #888;">namida-wrapped.vercel.app</div>
                                 <div style="font-weight: 900; font-size: 1rem; text-transform: uppercase; color: black;">${userName || 'Music Lover'}</div>
                             </div>
                          </div>
