@@ -1,0 +1,151 @@
+@font-face { font-family: 'CircularStd'; src: url('fonts/CircularStd-Book.ttf'); font-weight: 400; }
+@font-face { font-family: 'CircularStd'; src: url('fonts/CircularStd-Bold.ttf'); font-weight: 700; }
+@font-face { font-family: 'CircularStd'; src: url('fonts/CircularStd-Black.ttf'); font-weight: 900; }
+
+:root {
+    --bg-color: #121212;
+    --accent-lime: #d2fa39; 
+    --accent-purple: #b49bff;
+    --text-white: #ffffff;
+    --font-main: 'CircularStd', sans-serif; /* Твой шрифт */
+}
+
+body {
+    font-family: var(--font-main);
+    background-color: var(--bg-color);
+    color: var(--text-white);
+    overflow: hidden;
+    margin: 0; padding: 0;
+}
+
+/* Кастомный input file */
+.file-input-wrapper {
+    position: relative;
+    margin-bottom: 1rem;
+    width: 100%;
+}
+.file-input-wrapper input[type="file"] {
+    width: 100%;
+    padding: 12px;
+    background: #333;
+    border-radius: 12px; /* Скруглили */
+    border: 1px solid #444;
+    color: white;
+    font-family: var(--font-main);
+    cursor: pointer;
+    transition: 0.2s;
+}
+.file-input-wrapper input[type="file"]::file-selector-button {
+    background: var(--accent-lime);
+    color: black;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-weight: 700;
+    margin-right: 10px;
+    cursor: pointer;
+}
+.file-input-wrapper input[type="file"]:hover { background: #444; }
+
+/* Остальные стили из прошлого шага + доработки */
+.bg-pattern {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 0; pointer-events: none;
+    background-image: 
+        radial-gradient(circle at 10% 20%, rgba(210, 250, 57, 0.08) 0%, transparent 30%),
+        radial-gradient(circle at 90% 80%, rgba(180, 155, 255, 0.08) 0%, transparent 30%);
+}
+
+.slide-content {
+    position: relative; z-index: 10;
+    width: 100%; max-width: 480px; height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 24px; text-align: left;
+}
+
+/* Анимации */
+@keyframes slideUpReveal { 0% { transform: translateY(50px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+@keyframes textPop { 0% { transform: scale(0.95); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+.animate-pop { animation: textPop 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.animate-up { animation: slideUpReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+h1, h2 { font-weight: 900; letter-spacing: -0.03em; line-height: 0.95; }
+.big-stat { font-size: 4.5rem; color: var(--accent-lime); margin-bottom: 0.5rem; }
+
+/* СЕТКА АЛЬБОМОВ (Как на фото 2+3) */
+.album-grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr; /* 3 колонки */
+    grid-template-rows: auto auto;
+    gap: 8px;
+    width: 100%;
+    margin-top: 20px;
+}
+.grid-item { position: relative; aspect-ratio: 1/1; border-radius: 6px; overflow: hidden; background: #222; }
+.grid-item img { width: 100%; height: 100%; object-fit: cover; }
+.grid-item-big { grid-column: span 1; aspect-ratio: 1/1; } /* На самом деле сделаем хитрее */
+
+/* Раскладка: 
+   row1: item1 (span 1.5), item2 (span 1.5) -> CSS Grid так не умеет просто.
+   Сделаем 6 колонок.
+   item1: col span 3
+   item2: col span 3
+   item3: col span 2
+   item4: col span 2
+   item5: col span 2
+*/
+.album-grid-container {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+}
+.grid-pos-1 { grid-column: span 3; grid-row: 1; aspect-ratio: 1/1; }
+.grid-pos-2 { grid-column: span 3; grid-row: 1; aspect-ratio: 1/1; }
+.grid-pos-3 { grid-column: span 2; grid-row: 2; aspect-ratio: 1/1; }
+.grid-pos-4 { grid-column: span 2; grid-row: 2; aspect-ratio: 1/1; }
+.grid-pos-5 { grid-column: span 2; grid-row: 2; aspect-ratio: 1/1; }
+
+.grid-rank {
+    position: absolute; bottom: 4px; right: 4px;
+    background: white; color: black;
+    font-size: 0.8rem; font-weight: 900;
+    width: 20px; height: 20px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 4px;
+}
+
+/* Список топ альбомов текстом */
+.album-text-list { margin-top: 20px; }
+.album-text-row { display: flex; margin-bottom: 12px; gap: 10px; font-size: 0.9rem; }
+.album-text-rank { font-weight: 900; color: #888; min-width: 15px; }
+.album-text-info { flex: 1; }
+.album-text-name { font-weight: 700; color: white; }
+.album-text-art { color: #aaa; }
+
+/* Кнопки и инпуты */
+.btn-geo {
+    background: var(--accent-lime); color: black;
+    font-weight: 900; text-transform: uppercase;
+    padding: 16px 32px; border: none; border-radius: 50px; /* Круглая */
+    font-size: 1.1rem; width: 100%;
+    transition: 0.2s; cursor: pointer;
+}
+.btn-geo:hover { transform: scale(1.02); box-shadow: 0 0 20px rgba(210, 250, 57, 0.4); }
+
+/* Угадайка */
+.guess-btn {
+    width: 100%; padding: 16px; margin-bottom: 8px;
+    background: #222; border: 1px solid #333;
+    border-radius: 12px; text-align: left;
+    transition: 0.2s;
+}
+.guess-correct { background: #d2fa39 !important; color: black !important; border-color: #d2fa39 !important; }
+.guess-wrong { background: #ff4444 !important; border-color: #ff4444 !important; }
+
+/* Карточка итога */
+.summary-card {
+    background: #F2F0E9; color: #121212;
+    padding: 20px; border-radius: 0;
+    position: relative; overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+}

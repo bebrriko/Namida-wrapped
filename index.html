@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Namida Wrapped 2025</title>
+    <!-- Tailwind для быстрой верстки -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- JSZip & SQL.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+    <!-- Наши стили -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-black text-white font-sans overflow-hidden">
+
+    <div class="noise"></div>
+    
+    <!-- Контейнер для слайдов -->
+    <div id="app" class="relative w-full h-screen flex flex-col items-center justify-center p-6 text-center z-10">
+        <!-- Сюда JS будет рендерить контент -->
+    </div>
+
+    <!-- Навигация -->
+    <div id="nav-controls" class="fixed bottom-8 left-0 w-full flex justify-center gap-4 hidden z-50">
+    <button id="prevBtn" class="nav-btn">←</button>
+    <button id="nextBtn" class="nav-btn">→</button>
+</div>
+
+    <!-- Наш скрипт -->
+    <script src="script.js"></script>
+</body>
+</html>
