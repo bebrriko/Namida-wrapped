@@ -2,6 +2,19 @@
 @font-face { font-family: 'CircularStd'; src: url('fonts/CircularStd-Bold.ttf'); font-weight: 700; }
 @font-face { font-family: 'CircularStd'; src: url('fonts/CircularStd-Black.ttf'); font-weight: 900; }
 
+html, body {
+    font-family: var(--font-main);
+    background-color: var(--bg-color);
+    color: var(--text-white);
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+
 :root {
     --bg-color: #121212;
     --accent-lime: #d2fa39; 
@@ -10,13 +23,6 @@
     --font-main: 'CircularStd', sans-serif; /* Твой шрифт */
 }
 
-body {
-    font-family: var(--font-main);
-    background-color: var(--bg-color);
-    color: var(--text-white);
-    overflow: hidden;
-    margin: 0; padding: 0;
-}
 
 /* Кастомный input file */
 .file-input-wrapper {
@@ -47,15 +53,6 @@ body {
 }
 .file-input-wrapper input[type="file"]:hover { background: #444; }
 
-/* Остальные стили из прошлого шага + доработки */
-.bg-pattern {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    z-index: 0; pointer-events: none;
-    background-image: 
-        radial-gradient(circle at 10% 20%, rgba(210, 250, 57, 0.08) 0%, transparent 30%),
-        radial-gradient(circle at 90% 80%, rgba(180, 155, 255, 0.08) 0%, transparent 30%);
-}
-
 .slide-content {
     position: relative; z-index: 10;
     width: 100%; max-width: 480px; height: 100vh;
@@ -64,10 +61,15 @@ body {
 }
 
 /* Анимации */
-@keyframes slideUpReveal { 0% { transform: translateY(50px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+@keyframes slideUpReveal { 
+    0% { transform: translateY(100vh); opacity: 0; } /* Начинаем прям из подвала */
+    100% { transform: translateY(0); opacity: 1; } 
+}
 @keyframes textPop { 0% { transform: scale(0.95); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 .animate-pop { animation: textPop 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-.animate-up { animation: slideUpReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.animate-up { 
+    animation: slideUpReveal 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; 
+}
 
 h1, h2 { font-weight: 900; letter-spacing: -0.03em; line-height: 0.95; }
 .big-stat { font-size: 4.5rem; color: var(--accent-lime); margin-bottom: 0.5rem; }
@@ -174,7 +176,109 @@ h1, h2 { font-weight: 900; letter-spacing: -0.03em; line-height: 0.95; }
 .summary-card {
     /* Было 380px, делаем 450px для солидности */
     width: 100%; 
-    max-width: 450px !important; 
+    max-width: 420px !important; 
     /* Тень пожестче */
     box-shadow: 0 30px 80px rgba(0,0,0,0.8);
+}
+
+/* --- НОВАЯ СИСТЕМА НАВИГАЦИИ (SCROLL) --- */
+#app {
+    display: flex;
+    /* Важно: никаких отступов между слайдами, иначе сдвиг накопится */
+    gap: 0; 
+    margin: 0;
+    padding: 0;
+    
+    /* ... твои старые стили для transition и direction ... */
+    width: 100%;
+    height: 100%;
+    transition: transform 0.8s cubic-bezier(0.86, 0, 0.07, 1);
+}
+
+.slide {
+    /* ЖЕСТКАЯ фиксация размеров */
+    width: 100vw;
+    height: 100vh; /* Для мобилок лучше 100dvh, если поддерживает браузер */
+    height: 100dvh; 
+    
+    /* ЗАПРЕЩАЕМ слайду сжиматься, иначе они попытаются влезть все на один экран */
+    flex-shrink: 0; 
+    flex-grow: 0;
+    
+    /* Центрирование контента */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden; /* Чтобы контент не вылезал на соседний слайд */
+    box-sizing: border-box;
+}
+
+
+/* --- SPOTIFY-STYLE BACKGROUND --- */
+.bg-container {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background-color: #0d0d0d;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.orb {
+    position: absolute;
+    width: 80vw; /* Делаем их огромными для мягкости */
+    height: 80vw;
+    /* Убираем blur, так как градиент уже с transparent */
+    /* filter: blur(100px); <- НЕ НУЖНО */ 
+    mix-blend-mode: screen; /* Красивое наложение света */
+    transition: transform 2s cubic-bezier(0.4, 0, 0.2, 1); /* Очень медленное, тягучее движение */
+    will-change: transform;
+}
+
+/* Шар 1: Лаймовый (верхний левый сектор) */
+.orb-1 {
+    top: -25%; 
+    left: -25%;
+    /* Твой градиент, но центрированный внутри самого элемента div */
+    background: radial-gradient(circle, rgba(255,254,200, 0.25) 0%, transparent 60%);
+}
+
+/* Шар 2: Фиолетовый (нижний правый сектор) */
+.orb-2 {
+    bottom: -50%; 
+    right: -25%;
+    background: radial-gradient(circle, rgba(255,253,141, 0.25) 0%, transparent 60%);
+}
+
+/* --- МОБИЛЬНАЯ ВЕРСИЯ --- */
+@media (max-width: 768px) {
+    #app {
+        flex-direction: column; /* Вертикальный скролл на мобилках */
+    }
+
+    .slide {
+        width: 100%;
+        height: 100vh; /* Убедимся, что слайд на весь экран */
+    }
+
+    .orb {
+        /* Делаем их огромными, чтобы залить светом весь экран */
+        width: 200vw; 
+        height: 200vw;
+        opacity: 0.8; /* Чуть ярче, так как градиент растянется */
+    }
+
+    .orb-1 {
+        /* Левый-верхний: сдвигаем так, чтобы центр свечения был виден */
+        top: -40%; 
+        left: -50%;
+    }
+
+    .orb-2 {
+        /* Правый-нижний: поднимаем выше и левее, чтобы вылез из угла */
+        bottom: -30%; 
+        right: -60%;
+    }
 }
