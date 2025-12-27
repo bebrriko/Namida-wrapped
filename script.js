@@ -17,6 +17,9 @@ let touchStartY = 0;
 let touchEndY = 0;
 const appContainer = document.getElementById('app');
 
+
+let selectedYear = null;
+
 // --- SPOTIFY VIBE MOVEMENT ---
 const orb1 = document.querySelector('.orb-1');
 const orb2 = document.querySelector('.orb-2');
@@ -244,10 +247,11 @@ async function processFiles(masterFile) {
     status.innerText = "Unzipping the Master Archive... 📦";
     
     // НАСТРОЙКИ ГОДА
-    const TARGET_YEAR = new Date().getFullYear(); 
+    const TARGET_YEAR = getCurrentRecapYear();
+    
     const startOfYear = new Date(`${TARGET_YEAR}-01-01T00:00:00`).getTime();
     const endOfYear = new Date(`${TARGET_YEAR}-12-31T23:59:59`).getTime();
-    
+
     try {
         // 1. Load MASTER ZIP
         const masterZip = await JSZip.loadAsync(masterFile);
@@ -332,7 +336,7 @@ async function processFiles(masterFile) {
         console.log(`Debug: Оставили ${validCount} треков за ${TARGET_YEAR}. Смыли в унитаз ${filteredCount} старых.`);
 
         if (historyData.length === 0) {
-            alert(`Empty in ${new Date().getFullYear()}. Either dateAdded is bad, or you have listened to nothing.`);
+            alert(`Empty in ${getCurrentRecapYear()}. Either dateAdded is bad, or you have listened to nothing.`);
             status.innerText = 'No year data';
             return;
         }
@@ -489,7 +493,16 @@ window.addEventListener('resize', () => {
     }, 50);
 });
 
+// Select current year (or previous if in january)
+function getDefaultYear() {
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    return currentMonth === 0 ? now.getFullYear() - 1 : now.getFullYear();
+}
 
+function getCurrentRecapYear() {
+    return selectedYear || getDefaultYear();
+}
 
 
 async function renderApp() {
@@ -509,6 +522,20 @@ async function renderApp() {
                 <div class="file-input-wrapper">
                     <p class="text-sm text-gray-400 text-left mb-1 ml-1 font-bold">Drop your Backup Zip here 👇</p>
                     <input type="file" id="f1">
+                </div>
+
+                <div id="yearSelectorWrapper" class="mt-4 hidden">
+                    <p class="text-sm text-gray-400 mb-2 font-bold">Want a custom year recap?</p>
+                    <select id="yearSelector" class="bg-[#222] border-2 border-[#444] text-white px-4 py-2 rounded-lg w-full text-center font-bold text-lg hover:border-[#d2fa39] transition cursor-pointer">
+                        ${(() => {
+                            const currentYear = new Date().getFullYear();
+                            let options = '';
+                            for (let year = currentYear; year >= 2000; year--) {
+                                options += `<option value="${year}">${year}</option>`;
+                            }
+                            return options;
+                        })()}
+                    </select>
                 </div>
 
                 <button id="startBtn" class="btn-geo mt-4">Watch your wrapped</button>
@@ -550,6 +577,20 @@ async function renderApp() {
         document.getElementById('closeInstr').onclick = closeModal;
         document.getElementById('closeInstrBtn').onclick = closeModal;
 
+
+        document.getElementById('f1').addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                document.getElementById('yearSelectorWrapper').classList.remove('hidden');
+                
+                document.getElementById('yearSelector').value = getDefaultYear();
+                selectedYear = defaultYear;
+            }
+        });
+        
+        document.getElementById('yearSelector').addEventListener('change', (e) => {
+            selectedYear = parseInt(e.target.value);
+        });
+
         return; // Выходим, дальше строить пока нечего
     }
 
@@ -581,7 +622,7 @@ async function renderApp() {
         // Твой огромный switch переезжает сюда
         switch(i) {
             case 1: 
-                html = `<div class="slide-content animate-up"><h1 class="big-stat" style="font-size:3rem; color:white">HI THERE!</h1><p class="text-2xl">This is your Namida Wrapped ${new Date().getFullYear()}</p><p class="text-gray-500 mt-2">Are you ready?</p>
+                html = `<div class="slide-content animate-up"><h1 class="big-stat" style="font-size:3rem; color:white">HI THERE!</h1><p class="text-2xl">This is your Namida Wrapped ${getCurrentRecapYear()}</p><p class="text-gray-500 mt-2">Are you ready?</p>
                 <p class="text-xs text-gray-600 mt-4 desktop-only">(You can use arrow keys on your keyboard)</p>
                 <p class="text-xs text-gray-600 mt-4 md:hidden">(Swipe to navigate)</p></div>`; 
                 break;
@@ -748,7 +789,7 @@ async function renderApp() {
                         <div style="height:280px; width:100%; background:${heroBg} center/cover; filter:grayscale(100%) contrast(110%); position:absolute; top:0; left:0;"></div>
                         <div style="height:281px; width:100%; background:linear-gradient(to bottom, transparent 20%, #F2F0E9 95%); position:absolute; top:0; left:0;"></div>
                         <div style="position:relative; z-index:2; margin-top:180px;">
-                            <h1 style="font-size:4rem; line-height:0.8; color:black; margin-bottom:20px; letter-spacing: -2px;">WRAPPED<br><span style="color:#d2fa39; -webkit-text-stroke:1.5px black;">${new Date().getFullYear()}</span></h1>
+                            <h1 style="font-size:4rem; line-height:0.8; color:black; margin-bottom:20px; letter-spacing: -2px;">WRAPPED<br><span style="color:#d2fa39; -webkit-text-stroke:1.5px black;">${getCurrentRecapYear()}</span></h1>
                             <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom: 25px;">
                                 <div><h3 style="border-bottom:3px solid black; font-size:0.9rem; margin-bottom:8px; padding-bottom:2px;">TOP ARTISTS</h3>${colArt}</div>
                                 <div><h3 style="border-bottom:3px solid black; font-size:0.9rem; margin-bottom:8px; padding-bottom:2px;">TOP SONGS</h3>${colTrk}</div>
@@ -831,7 +872,7 @@ async function renderApp() {
                 htmlToImage.toPng(card, { quality: 1.0, pixelRatio: 3, backgroundColor: '#F2F0E9' })
                 .then(function (dataUrl) {
                     const link = document.createElement('a');
-                    link.download = `Namida_Wrapped_${new Date().getFullYear()}_${userName}.png`;
+                    link.download = `Namida_Wrapped_${getCurrentRecapYear()}_${userName}.png`;
                     link.href = dataUrl;
                     link.click();
                     btn.innerText = "SAVED! 🔥";
