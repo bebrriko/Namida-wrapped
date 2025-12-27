@@ -244,7 +244,9 @@ async function processFiles(masterFile) {
     status.innerText = "Unzipping the Master Archive... 📦";
     
     // НАСТРОЙКИ ГОДА
-    const TARGET_YEAR = new Date().getFullYear(); 
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const TARGET_YEAR = currentMonth === 0 ? now.getFullYear() - 1 : now.getFullYear();
     const startOfYear = new Date(`${TARGET_YEAR}-01-01T00:00:00`).getTime();
     const endOfYear = new Date(`${TARGET_YEAR}-12-31T23:59:59`).getTime();
     
